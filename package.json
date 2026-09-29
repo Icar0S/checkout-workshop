@@ -1,0 +1,13 @@
+{
+  "name": "checkout-workshop",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Checkout minimo para o workshop de specs. Subtotal, frete e total prontos. Cupom, nao.",
+  "engines": { "node": ">=20" },
+  "scripts": {
+    "test": "node --test",
+    "start": "node src/server.js",
+    "reset": "git checkout -- src/ test/ && git clean -fd src/ test/"
+  }
+}
