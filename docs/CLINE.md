@@ -58,7 +58,7 @@ Sem o New Task, o agente continua com a memória do pedido vago e vai repetir as
 
 ## Regras do jogo
 
-- Não edite código à mão durante as rodadas.
+- Não edite código à mão enquanto o agente estiver rodando. Editar o `.clinerules` e o `SPEC.md` é parte do ciclo.
 - Não dê dica para o agente fora do pedido.
 - Não olhe a tela do outro grupo até o instrutor mandar.
 
