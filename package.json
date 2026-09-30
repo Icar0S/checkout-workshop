@@ -10,11 +10,11 @@
   "scripts": {
     "test": "node --test",
     "start": "node src/server.js",
-    "reset": "git checkout -- src/ test/ && git clean -fd src/ test/",
-    "checkpoint:1": "git stash push -u -m meu-progresso; git checkout checkpoint/1-criterios",
-    "checkpoint:2": "git stash push -u -m meu-progresso; git checkout checkpoint/2-cupom",
-    "checkpoint:3": "git stash push -u -m meu-progresso; git checkout checkpoint/3-clinerules",
-    "voltar": "git stash push -u -m meu-progresso; git checkout main",
-    "revisao": "(git show material/revisao:REVISAO.md 2>/dev/null || git show origin/material/revisao:REVISAO.md) > REVISAO.md && echo 'abra REVISAO.md no editor'"
+    "reset": "node scripts/reset.mjs",
+    "checkpoint:1": "node scripts/checkpoint.mjs 1",
+    "checkpoint:2": "node scripts/checkpoint.mjs 2",
+    "checkpoint:3": "node scripts/checkpoint.mjs 3",
+    "voltar": "node scripts/checkpoint.mjs main",
+    "revisao": "node scripts/revisao.mjs"
   }
 }

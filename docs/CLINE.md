@@ -2,17 +2,19 @@
 
 Guia mínimo para quem nunca usou. Cinco minutos de leitura.
 
-## Antes do workshop
+## Setup — os primeiros 12 minutos
 
-1. Instale a extensão **Cline** no VS Code (marketplace, autor "Cline").
-2. Abra a **pasta** `checkout-workshop` no VS Code (*File → Open Folder*). O Cline só enxerga a pasta aberta — se abrir um arquivo solto, ele não vê o projeto.
-3. No painel do Cline, configure o provedor:
-   - **API Provider:** o que a empresa indicou para o GLM (*Z AI*, ou *OpenAI Compatible* com a base URL fornecida).
-   - **Model:** o modelo GLM indicado.
-   - **API Key:** a chave que você recebeu.
-   - Os nomes exatos dos campos variam com a versão do Cline. Se não encontrar, pergunte antes do dia.
-4. Teste: peça *"adicione um comentário no topo de src/pricing.js"*. Aprove a edição. Confirme que o arquivo mudou.
-5. Desfaça: `npm run reset` no terminal.
+O Cline com GLM já está instalado nas estações. O que você faz no dia:
+
+1. `node -v` no terminal. Precisa ser **20 ou mais**. Se não responder ou for menor, **junte-se a um grupo cuja máquina funciona** — não tente instalar agora.
+2. Clone o repositório (URL no slide) e entre na pasta.
+3. `npm test`. Os 11 testes precisam passar. Não existe `npm install`.
+4. Abra a **pasta** no VS Code (*File → Open Folder*). O Cline só enxerga a pasta aberta — se abrir um arquivo solto, ele não vê o projeto.
+5. No painel do Cline, confira que o provedor e o modelo GLM aparecem selecionados. Se pedir chave ou der erro de autenticação, levante a mão.
+6. Teste: peça *"adicione um comentário no topo de src/pricing.js"*. Aprove a edição. Confirme que o arquivo mudou.
+7. Desfaça: `npm run reset`.
+
+Funcionou? Levante a mão. O instrutor forma os grupos em volta das máquinas prontas. **Cada grupo trabalha numa máquina só.**
 
 ## Configurações para o dia
 
@@ -58,13 +60,13 @@ Sem o New Task, o agente continua com a memória da rodada 1 e vai repetir as de
 
 - Não edite código à mão durante as rodadas.
 - Não dê dica para o agente fora do pedido.
-- Não olhe a tela do vizinho até o instrutor mandar.
+- Não olhe a tela do outro grupo até o instrutor mandar.
 
 ## Se travar
 
 | Sintoma | Faça |
 | --- | --- |
-| Erro de API ou limite de uso | Espere 30 segundos e clique em *Retry*. Se persistir, junte-se à dupla ao lado. |
+| Erro de API ou limite de uso | Espere 30 segundos e clique em *Retry*. Se persistir, junte-se ao grupo ao lado. |
 | Ficou em loop, repetindo a mesma coisa | *Cancel*, New Task, cole o pedido de novo. |
 | Aviso de contexto cheio | New Task. |
 | Ele estragou um arquivo | `npm run reset` e recomece a rodada. |
