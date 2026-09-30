@@ -4,7 +4,9 @@
   "private": true,
   "type": "module",
   "description": "Checkout minimo para o workshop de specs. Subtotal, frete e total prontos. Cupom, nao.",
-  "engines": { "node": ">=20" },
+  "engines": {
+    "node": ">=20"
+  },
   "scripts": {
     "test": "node --test",
     "start": "node src/server.js",
@@ -12,6 +14,7 @@
     "checkpoint:1": "git stash push -u -m meu-progresso; git checkout checkpoint/1-criterios",
     "checkpoint:2": "git stash push -u -m meu-progresso; git checkout checkpoint/2-cupom",
     "checkpoint:3": "git stash push -u -m meu-progresso; git checkout checkpoint/3-clinerules",
-    "voltar": "git stash push -u -m meu-progresso; git checkout main"
+    "voltar": "git stash push -u -m meu-progresso; git checkout main",
+    "revisao": "(git show material/revisao:REVISAO.md 2>/dev/null || git show origin/material/revisao:REVISAO.md) > REVISAO.md && echo 'abra REVISAO.md no editor'"
   }
 }

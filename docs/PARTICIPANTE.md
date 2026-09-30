@@ -78,19 +78,17 @@ A regra que vale mais que o molde: **se a frase não vira um teste, a frase est�
 
 ## 3. A revisão
 
-O instrutor vai mandar uma especificação no chat. Leia na tela.
-
-Regras: **não rode nada, não cole no Cline, não abra o código.** É uma leitura de revisor, como num PR.
-
-Você tem seis minutos, em dupla, para **aprovar ou reprovar**. Responda no chat com uma linha:
+Quando o instrutor mandar — não antes — rode no terminal:
 
 ```
-aprovo
+npm run revisao
 ```
-ou
-```
-reprovo — CA-xx: <motivo>
-```
+
+Isso cria um arquivo `REVISAO.md` na raiz. Abra no editor e leia.
+
+Regras: **não rode nada, não cole no Cline, não abra o código.** É leitura de revisor, como num PR.
+
+Você tem seis minutos, em dupla, para decidir: **aprova ou reprova?** Se reprovar, anote em qual item e por quê — o instrutor vai perguntar.
 
 ---
 

@@ -12,6 +12,7 @@ npm start         # sobe a API em http://localhost:3000
 npm run reset     # desfaz alteracoes em src/ e test/ (entre as rodadas)
 npm run checkpoint:1   # travou? avanca para o resultado esperado da etapa
 npm run voltar         # de volta ao main
+npm run revisao        # so quando o instrutor mandar
 ```
 
 ```
