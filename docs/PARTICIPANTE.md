@@ -76,11 +76,21 @@ A regra que vale mais que o molde: **se a frase não vira um teste, a frase est�
 
 ---
 
-## 3. A revisão no papel
+## 3. A revisão
 
-Sem máquina. O instrutor entrega uma especificação impressa.
+O instrutor vai mandar uma especificação no chat. Leia na tela.
 
-Você tem seis minutos, em dupla, para **aprovar ou reprovar**. Se reprovar, marque onde.
+Regras: **não rode nada, não cole no Cline, não abra o código.** É uma leitura de revisor, como num PR.
+
+Você tem seis minutos, em dupla, para **aprovar ou reprovar**. Responda no chat com uma linha:
+
+```
+aprovo
+```
+ou
+```
+reprovo — CA-xx: <motivo>
+```
 
 ---
 
