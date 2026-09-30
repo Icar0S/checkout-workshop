@@ -92,43 +92,58 @@ Você tem seis minutos, em dupla, para decidir: **aprova ou reprova?** Se reprov
 
 ---
 
-## 4. O `.clinerules` do seu projeto
+## 4. O `.clinerules` — o agente escreve, você corrige, e a gente testa
 
-Abra o `.clinerules` deste repositório. Ele está propositalmente incompleto.
+O Cline lê o arquivo `.clinerules` da raiz em **toda** tarefa. É onde ficam as regras que você não quer repetir a cada pedido. O deste repositório está propositalmente magro. Vamos fazer um de verdade — sem escrever nada de memória.
 
-Agora pense no **seu** projeto de verdade — não neste — e preencha o modelo abaixo num arquivo novo. Seis blocos. Prosa proibida: se der vontade de escrever um parágrafo explicando o estilo, cole dez linhas de um arquivo real no lugar.
+### Passo 1 — o agente escreve (3 min)
+
+**New Task**, modo Act, cole:
 
 ```
-# Regras do projeto
-
-## Comandos
-Instalar:  <comando exato>
-Rodar:     <comando exato>
-Testar:    <comando exato>
-Lint:      <comando exato>
-
-## Testes
-Framework: <qual>. Onde ficam: <caminho>.
-Toda mudança de comportamento precisa de teste.
-Não altere teste existente para fazer passar.
-
-## Estrutura
-<3 a 5 linhas: onde mora o quê. Só o que não dá para adivinhar olhando.>
-
-## Estilo
-<Cole 10 linhas de um arquivo real que representa bem o padrão.>
-
-## Git
-Branch: <convenção>
-Commit: <convenção>
-
-## Nunca faça
-- <limite 1>
-- <limite 2>
-- <limite 3>
+Leia este repositório e escreva um arquivo .clinerules na raiz com exatamente estas seis seções: Comandos, Testes, Estrutura, Estilo, Git, Nunca faça. Cada seção com no máximo 5 linhas. Em Estilo, cole um trecho real de src/pricing.js em vez de descrever. Não invente nada que não esteja no código.
 ```
 
-Leve esse arquivo para o seu projeto na segunda-feira. Chama `.clinerules`. Se o time usa outros agentes, copie o mesmo conteúdo para `AGENTS.md`.
+Aprove. Leia o que saiu. Tudo ali o agente **descobriu olhando o código**.
+
+### Passo 2 — você acrescenta o que ele não tem como saber (1 min)
+
+Abra o `.clinerules` e adicione, à mão, esta linha na seção **Nunca faça**:
+
+```
+- Nunca converta centavos para reais dentro de src/. Formatação é problema de quem exibe.
+```
+
+Essa regra não está em lugar nenhum do código. É uma decisão de quem conhece o projeto. **É a única parte que só você pode escrever.**
+
+### Passo 3 — testar se a regra pega (4 min)
+
+**New Task** (obrigatório — senão ele não relê o arquivo). Cole:
+
+```
+faça GET /cart/:id/total devolver os valores em reais com duas casas, tipo 189.97
+```
+
+Observe o que ele faz. Só há quatro possibilidades:
+
+- **Recusa** e cita a regra.
+- **Pergunta** se pode, ou propõe fazer só em `server.js`.
+- **Faz em `server.js`** e deixa `pricing.js` em centavos — respeitou.
+- **Faz em `pricing.js`** — ignorou a regra.
+
+Anote qual foi. O instrutor vai perguntar.
+
+### Passo 4 — guarde (1 min)
+
+```
+git add .clinerules && git commit -m "regras do projeto"
+```
+
+### Na segunda-feira
+
+Rode o **Passo 1** no seu projeto de verdade. Leia o que saiu. Acrescente as duas ou três linhas que só você sabe. Teste uma delas. É o mesmo procedimento — o projeto é o que muda.
+
+Se o time usa outros agentes além do Cline, copie o mesmo conteúdo para `AGENTS.md`.
 
 ---
 
@@ -140,7 +155,7 @@ Cada etapa tem um branch com o resultado esperado. Use se o agente travar, a API
 | --- | --- |
 | `npm run checkpoint:1` | Um `SPEC.md` com quatro critérios de exemplo — para a rodada 2 |
 | `npm run checkpoint:2` | O cupom implementado a partir desses critérios, com testes |
-| `npm run checkpoint:3` | Um `.clinerules` completo, como exemplo para o bloco 4 |
+| `npm run checkpoint:3` | Um `.clinerules` completo, para comparar com o que o seu agente escreveu |
 | `npm run voltar` | De volta ao `main` |
 
 Para recuperar o que você tinha feito: `git stash list` e `git stash pop`.
