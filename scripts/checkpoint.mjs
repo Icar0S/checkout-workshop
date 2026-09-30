@@ -3,9 +3,9 @@
 import { execFileSync } from 'node:child_process';
 
 const branches = {
-  1: 'checkpoint/1-criterios',
-  2: 'checkpoint/2-cupom',
-  3: 'checkpoint/3-clinerules',
+  1: 'checkpoint/1-constituicao',
+  2: 'checkpoint/2-spec',
+  3: 'checkpoint/3-implementado',
   main: 'main'
 };
 

@@ -15,7 +15,7 @@ Requer **Node 20 ou superior**. Nao existe `npm install` — nao ha pacotes.
 npm test               # suite de testes (node:test nativo)
 npm start              # sobe a API em http://localhost:3000
 npm run reset          # desfaz src/ e test/ (entre as rodadas)
-npm run checkpoint:1   # travou? avanca para o resultado esperado da etapa (1, 2 ou 3)
+npm run checkpoint:1   # travou? avanca para o resultado esperado do passo (1, 2 ou 3)
 npm run voltar         # de volta ao main
 npm run revisao        # so quando o instrutor mandar
 ```

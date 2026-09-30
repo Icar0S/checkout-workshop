@@ -34,14 +34,14 @@ Se a sala inteira estiver lenta, o instrutor pode liberar a execução de comand
 - **Plan** — só lê e propõe. Não edita.
 - **Act** — edita e roda.
 
-**Neste workshop, use Act nas duas rodadas.** O motivo: a única coisa que pode mudar entre a rodada 1 e a rodada 2 é o texto do pedido. Se você trocar de modo, não dá mais para saber o que causou a diferença.
+**Neste workshop, use Act o tempo todo.** O motivo: a única coisa que muda entre o pedido vago do começo e o pedido com spec é o texto. Se você trocar de modo, não dá mais para saber o que causou a diferença.
 
-## Entre as rodadas — obrigatório
+## Entre o pedido vago e a implementação — obrigatório
 
 1. `npm run reset` no terminal.
 2. **New Task** no Cline (o botão `+` no topo do painel).
 
-Sem o New Task, o agente continua com a memória da rodada 1 e vai repetir as decisões que já tomou. O experimento deixa de valer.
+Sem o New Task, o agente continua com a memória do pedido vago e vai repetir as decisões que já tomou. O experimento deixa de valer.
 
 ## Como colar o pedido
 
@@ -69,11 +69,11 @@ Sem o New Task, o agente continua com a memória da rodada 1 e vai repetir as de
 | Erro de API ou limite de uso | Espere 30 segundos e clique em *Retry*. Se persistir, junte-se ao grupo ao lado. |
 | Ficou em loop, repetindo a mesma coisa | *Cancel*, New Task, cole o pedido de novo. |
 | Aviso de contexto cheio | New Task. |
-| Ele estragou um arquivo | `npm run reset` e recomece a rodada. |
+| Ele estragou um arquivo | `npm run reset` e recomece o passo. |
 | Perdeu tudo e o tempo está acabando | `npm run checkpoint:1` (ou `:2`, `:3`). Veja o guia do participante. |
 
 ## O `.clinerules`
 
 O Cline lê o arquivo `.clinerules` na raiz do projeto (ou uma pasta `.clinerules/` com vários `.md`) **em toda tarefa**, automaticamente. É onde moram as regras que você não quer repetir em cada pedido: comandos, convenções, limites.
 
-O deste repositório está propositalmente magro. Você escreve um de verdade no último bloco.
+O deste repositório está propositalmente magro. Você escreve um de verdade no passo ① do ciclo — e a partir dali ele vale para todos os passos seguintes.
