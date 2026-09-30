@@ -8,6 +8,10 @@
   "scripts": {
     "test": "node --test",
     "start": "node src/server.js",
-    "reset": "git checkout -- src/ test/ && git clean -fd src/ test/"
+    "reset": "git checkout -- src/ test/ && git clean -fd src/ test/",
+    "checkpoint:1": "git stash push -u -m meu-progresso; git checkout checkpoint/1-criterios",
+    "checkpoint:2": "git stash push -u -m meu-progresso; git checkout checkpoint/2-cupom",
+    "checkpoint:3": "git stash push -u -m meu-progresso; git checkout checkpoint/3-clinerules",
+    "voltar": "git stash push -u -m meu-progresso; git checkout main"
   }
 }

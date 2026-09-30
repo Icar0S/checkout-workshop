@@ -15,7 +15,7 @@ async function get(caminho) {
 }
 
 test('GET /cart/:id/total devolve subtotal, frete e total', async () => {
-  const { status, corpo } = await get('/cart/c1/total');
+  const { status, corpo } = await get('/cart/c0/total');
   assert.equal(status, 200);
   assert.deepEqual(corpo, { subtotal: 18997, frete: 1990, total: 20987 });
 });

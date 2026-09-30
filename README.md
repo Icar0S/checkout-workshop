@@ -10,6 +10,8 @@ Requer **Node 20 ou superior**. Nao existe `npm install` — nao ha pacotes.
 npm test          # suite de testes (node:test nativo)
 npm start         # sobe a API em http://localhost:3000
 npm run reset     # desfaz alteracoes em src/ e test/ (entre as rodadas)
+npm run checkpoint:1   # travou? avanca para o resultado esperado da etapa
+npm run voltar         # de volta ao main
 ```
 
 ```
@@ -33,11 +35,16 @@ Dinheiro sempre em **centavos inteiros**. Nunca float.
 O carrinho tem um campo `couponCode`, e os cupons estao em `src/data.js`.
 Nada disso e usado no calculo.
 
+## Documentos
+
+- [`docs/PARTICIPANTE.md`](./docs/PARTICIPANTE.md) — o passo a passo do workshop
+- [`docs/CLINE.md`](./docs/CLINE.md) — configurar e usar o Cline
+
 ## Preparacao (antes do workshop)
 
 1. Clone o repo.
 2. Rode `npm test`. Os 11 testes precisam passar.
-3. Abra seu agente nesta pasta e peca algo trivial, tipo
+3. Configure o Cline ([`docs/CLINE.md`](./docs/CLINE.md)) e peca algo trivial, tipo
    *"adicione um comentario no topo de src/pricing.js"*.
    Confirme que ele de fato editou o arquivo.
 4. Responda com uma palavra: **funcionou** ou **quebrou**.

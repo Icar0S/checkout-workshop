@@ -34,6 +34,12 @@ export const cupons = {
 };
 
 export const carrinhos = {
+  c0: {
+    id: 'c0',
+    cep: '01310100',
+    couponCode: null,
+    items: [{ id: 'p1', nome: 'Fone de ouvido', precoCentavos: 18997, qtd: 1 }]
+  },
   c1: {
     id: 'c1',
     cep: '01310100',
