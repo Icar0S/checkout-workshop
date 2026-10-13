@@ -8,11 +8,28 @@ async function get(caminho) {
   try {
     const { port } = servidor.address();
     const resposta = await fetch(`http://127.0.0.1:${port}${caminho}`);
-    return { status: resposta.status, corpo: await resposta.json() };
+    const tipo = resposta.headers.get('content-type');
+    const corpo = tipo.startsWith('application/json') ? await resposta.json() : await resposta.text();
+    return { status: resposta.status, tipo, corpo };
   } finally {
     servidor.close();
   }
 }
+
+test('GET / devolve a tela', async () => {
+  const { status, tipo, corpo } = await get('/');
+  assert.equal(status, 200);
+  assert.match(tipo, /^text\/html/);
+  assert.match(corpo, /<title>Checkout<\/title>/);
+});
+
+test('GET /carts lista os carrinhos com itens e cupom', async () => {
+  const { status, corpo } = await get('/carts');
+  assert.equal(status, 200);
+  assert.equal(corpo.length, 8);
+  assert.deepEqual(Object.keys(corpo[1]), ['id', 'cep', 'couponCode', 'items']);
+  assert.equal(corpo[1].couponCode, 'DEZOFF');
+});
 
 test('GET /cart/:id/total devolve subtotal, frete e total', async () => {
   const { status, corpo } = await get('/cart/c0/total');

@@ -1,26 +1,27 @@
 # checkout-workshop
 
-Checkout minimo, sem nenhuma dependencia. Usado no workshop de specs.
+Checkout mínimo, sem nenhuma dependência. Subtotal, frete e total funcionam.
 
-Requer **Node 20 ou superior**. Nao existe `npm install` — nao ha pacotes.
-
-## Comece aqui
-
-- [`docs/PARTICIPANTE.md`](./docs/PARTICIPANTE.md) — o passo a passo do workshop, do setup ao fim
-- [`docs/CLINE.md`](./docs/CLINE.md) — configurar e usar o Cline
+Requer **Node 20 ou superior**. Não existe `npm install` — não há pacotes.
 
 ## Comandos
 
 ```
-npm test               # suite de testes (node:test nativo)
-npm start              # sobe a API em http://localhost:3000
-npm run reset          # desfaz src/ e test/ (entre o pedido vago e o ciclo)
-npm run checkpoint:1   # travou? avanca para o resultado esperado do passo (1, 2 ou 3)
-npm run voltar         # de volta ao main
-npm run revisao        # so quando o instrutor mandar
+npm test     # suite de testes (node:test nativo)
+npm start    # sobe a API e a tela em http://localhost:3000
 ```
 
-Todos funcionam em macOS, Linux e Windows.
+Os demais scripts do `package.json` (`reset`, `checkpoint:*`, `voltar`, `revisao`)
+estão explicados no guia que o instrutor compartilha. Todos funcionam em macOS,
+Linux e Windows.
+
+## A tela
+
+`npm start` e abra <http://localhost:3000>. Escolha um carrinho, confira o CEP
+e clique em **Calcular**. A tela só exibe o que a API devolve — toda conta
+acontece em `src/pricing.js`.
+
+Pela linha de comando:
 
 ```
 curl http://localhost:3000/cart/c1/total
@@ -31,14 +32,15 @@ curl http://localhost:3000/cart/c1/total
 
 | Arquivo | O que faz |
 | --- | --- |
-| `src/data.js` | Carrinhos e cupons em memoria |
+| `src/data.js` | Carrinhos e cupons em memória |
 | `src/pricing.js` | `calcularSubtotal`, `calcularFrete`, `calcularTotal` |
-| `src/server.js` | `GET /cart/:id/total` |
-| `test/` | 11 testes, todos verdes |
+| `src/server.js` | `GET /carts`, `GET /cart/:id/total` e a página em `/` |
+| `public/index.html` | A tela. Formata centavos em reais; não faz conta |
+| `test/` | 13 testes, todos verdes |
 
 Dinheiro sempre em **centavos inteiros**. Nunca float.
 
-## O que nao existe
+## O que não existe
 
-O carrinho tem um campo `couponCode`, e os cupons estao em `src/data.js`.
-Nada disso e usado no calculo.
+O carrinho tem um campo `couponCode`, e os cupons estão em `src/data.js`.
+Nada disso é usado no cálculo.

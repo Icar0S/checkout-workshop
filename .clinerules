@@ -1,10 +1,7 @@
-# Regras do projeto (Cline le este arquivo em toda tarefa)
+# Regras do projeto
+
+Nunca faça commit nem push. Quem mexe no git é o humano.
 
 ## Comandos
 Testar:  npm test
 Rodar:   npm start
-
-<!--
-Este arquivo esta deliberadamente incompleto.
-Voce vai termina-lo no passo 1 do ciclo (constituicao).
--->

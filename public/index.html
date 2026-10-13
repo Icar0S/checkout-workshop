@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Checkout</title>
+  <style>
+    :root { --fundo: #f6f6f4; --cartao: #fff; --texto: #1d1d1b; --suave: #6b6b66; --linha: #e4e4df; --erro: #b3261e; }
+    * { box-sizing: border-box; }
+    body { margin: 0; padding: 32px 16px; background: var(--fundo); color: var(--texto); font: 16px/1.5 system-ui, sans-serif; }
+    main { max-width: 520px; margin: 0 auto; background: var(--cartao); border: 1px solid var(--linha); border-radius: 12px; padding: 24px; }
+    h1 { font-size: 20px; margin: 0 0 16px; }
+    label { display: block; font-size: 13px; color: var(--suave); margin-top: 12px; }
+    select, input { width: 100%; font: inherit; padding: 8px 10px; margin-top: 4px; border: 1px solid var(--linha); border-radius: 8px; background: #fff; }
+    table { width: 100%; border-collapse: collapse; margin-top: 16px; }
+    td { padding: 6px 0; border-bottom: 1px solid var(--linha); }
+    td:last-child { text-align: right; font-variant-numeric: tabular-nums; }
+    .cupom { margin-top: 12px; font-size: 14px; color: var(--suave); }
+    .cupom code { background: var(--fundo); padding: 2px 6px; border-radius: 4px; color: var(--texto); }
+    button { margin-top: 16px; width: 100%; font: inherit; font-weight: 600; padding: 10px; border: 0; border-radius: 8px; background: var(--texto); color: #fff; cursor: pointer; }
+    #resultado { margin-top: 16px; }
+    #resultado .total td { font-weight: 700; border-bottom: 0; }
+    #erro { color: var(--erro); white-space: pre-wrap; font-family: ui-monospace, monospace; font-size: 13px; }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Checkout</h1>
+
+    <label>Carrinho
+      <select id="carrinho"></select>
+    </label>
+
+    <table id="itens"></table>
+    <p class="cupom" id="cupom"></p>
+
+    <label>CEP de entrega
+      <input id="cep" inputmode="numeric" maxlength="8">
+    </label>
+
+    <button id="calcular">Calcular</button>
+
+    <div id="resultado"></div>
+    <p id="erro"></p>
+  </main>
+
+  <script>
+    // A tela nao faz conta. Formatar centavos em reais e trabalho dela; calcular, nao.
+    const reais = (centavos) =>
+      (centavos / 100).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+
+    const rotulos = { subtotal: 'Subtotal', frete: 'Frete', total: 'Total' };
+
+    const $ = (id) => document.getElementById(id);
+    let carrinhos = [];
+
+    async function carregarCarrinhos() {
+      const resposta = await fetch('/carts');
+      carrinhos = await resposta.json();
+      $('carrinho').innerHTML = carrinhos
+        .map((c) => `<option value="${c.id}">${c.id} — ${c.items.map((i) => i.nome).join(', ')}</option>`)
+        .join('');
+      mostrarCarrinho();
+    }
+
+    function carrinhoAtual() {
+      return carrinhos.find((c) => c.id === $('carrinho').value);
+    }
+
+    function mostrarCarrinho() {
+      const c = carrinhoAtual();
+      $('itens').innerHTML = c.items
+        .map((i) => `<tr><td>${i.qtd} × ${i.nome}</td><td>${reais(i.precoCentavos * i.qtd)}</td></tr>`)
+        .join('');
+      $('cupom').innerHTML = c.couponCode
+        ? `Cupom no carrinho: <code>${c.couponCode}</code>`
+        : 'Sem cupom neste carrinho.';
+      $('cep').value = c.cep;
+      $('resultado').innerHTML = '';
+      $('erro').textContent = '';
+    }
+
+    async function calcular() {
+      const c = carrinhoAtual();
+      const cep = $('cep').value.trim();
+      $('resultado').innerHTML = '';
+      $('erro').textContent = '';
+
+      const resposta = await fetch(`/cart/${c.id}/total?cep=${encodeURIComponent(cep)}`);
+      const corpo = await resposta.json();
+
+      if (!resposta.ok) {
+        $('erro').textContent = `HTTP ${resposta.status}\n${JSON.stringify(corpo, null, 2)}`;
+        return;
+      }
+
+      // Mostra tudo que a API devolver, na ordem em que devolver. Se aparecer
+      // um campo novo, aparece aqui tambem.
+      const linhas = Object.entries(corpo).map(([campo, valor]) => {
+        const rotulo = rotulos[campo] ?? campo;
+        const texto = Number.isInteger(valor) ? reais(valor) : JSON.stringify(valor);
+        return `<tr class="${campo === 'total' ? 'total' : ''}"><td>${rotulo}</td><td>${texto}</td></tr>`;
+      });
+      $('resultado').innerHTML = `<table>${linhas.join('')}</table>`;
+    }
+
+    $('carrinho').addEventListener('change', mostrarCarrinho);
+    $('calcular').addEventListener('click', calcular);
+    carregarCarrinhos();
+  </script>
+</body>
+</html>

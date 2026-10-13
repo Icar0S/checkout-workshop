@@ -1,10 +1,7 @@
 # AGENTS.md
 
-## Comandos
-Testar:  `npm test`
-Rodar:   `npm start`
+Nunca faça commit nem push. Quem mexe no git é o humano.
 
-<!--
-Este arquivo esta deliberadamente incompleto.
-Voce vai termina-lo no passo 1 do ciclo (constituicao).
--->
+As regras deste projeto estão em `.clinerules`, na raiz. Leia aquele arquivo
+antes de qualquer tarefa e siga o que está lá. Este arquivo existe só para
+agentes que não leem `.clinerules`.
