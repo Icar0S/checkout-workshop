@@ -4,4 +4,43 @@ Nunca faça commit nem push. Quem mexe no git é o humano.
 
 ## Comandos
 Testar:  npm test
-Rodar:   npm start
+Rodar:   npm start          (API e tela em http://localhost:3000)
+Reset:   npm run reset      (desfaz src/, public/ e test/)
+Não existe npm install. O projeto não tem dependências.
+
+## Testes
+Framework: node:test nativo, com node:assert/strict. Ficam em test/*.test.js.
+Toda mudança de comportamento precisa de teste novo ou alterado.
+Não altere um teste existente só para fazê-lo passar. Se um teste existente
+está errado, diga isso e pare.
+Datas nos testes são injetadas (parâmetro `hoje`), nunca `new Date()` direto.
+
+## Estrutura
+src/data.js        fixtures em memória: carrinhos e cupons
+src/pricing.js     todo o cálculo: subtotal, frete, desconto, total
+src/server.js      só HTTP; nenhuma regra de negócio aqui
+public/index.html  a tela; formata centavos em reais e não faz conta
+SPEC.md            critérios de aceitação da feature em andamento e decisões fora da spec
+
+## Estilo
+Dinheiro é sempre inteiro em centavos. Nunca float, nunca string.
+Funções puras que recebem o carrinho e devolvem números; sem estado global.
+Exemplo real do padrão:
+
+    export function calcularFrete(carrinho, cep = carrinho.cep) {
+      if (calcularSubtotal(carrinho) >= FRETE_GRATIS_A_PARTIR_DE) return 0;
+      const primeiroDigito = Number(String(cep).replace(/\D/g, '').charAt(0));
+      return primeiroDigito <= 3 ? FRETE_SUDESTE : FRETE_DEMAIS;
+    }
+
+Erros de negócio são classes próprias (ex.: CupomInvalido) e viram 422 no server.
+
+## Git
+Nunca faça commit nem push. O humano cuida do git.
+Os branches checkpoint/* e material/* são do workshop; não os toque.
+
+## Nunca faça
+- Nunca converta centavos para reais dentro de src/. Formatação é problema de quem exibe.
+- Não adicione dependência. Se precisar de algo que não está no Node, pergunte.
+- Não mexa em src/data.js para fazer um teste passar. As fixtures são o contrato.
+- Se um critério do SPEC.md for ambíguo, pergunte antes de escolher. Não decida em silêncio.
