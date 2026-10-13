@@ -1,7 +1,7 @@
 import { createServer } from 'node:http';
 import { readFileSync } from 'node:fs';
 import { buscarCarrinho, carrinhos } from './data.js';
-import { calcularTotal } from './pricing.js';
+import { calcularTotal, CupomInvalido } from './pricing.js';
 
 const PORT = Number(process.env.PORT ?? 3000);
 const PAGINA = new URL('../public/index.html', import.meta.url);
@@ -23,35 +23,48 @@ function html(res, status, body) {
   res.end(body);
 }
 
-export const app = createServer((req, res) => {
-  const url = new URL(req.url, `http://${req.headers.host ?? 'localhost'}`);
+// O relogio e injetado: o total depende do dia (validade do cupom, fase da lua),
+// e os testes precisam de uma data fixa.
+export function criarApp(agora = () => new Date()) {
+  return createServer((req, res) => {
+    const url = new URL(req.url, `http://${req.headers.host ?? 'localhost'}`);
 
-  if (req.method !== 'GET') {
-    return json(res, 404, { erro: 'rota nao encontrada' });
-  }
+    if (req.method !== 'GET') {
+      return json(res, 404, { erro: 'rota nao encontrada' });
+    }
 
-  if (url.pathname === '/') {
-    // Lido a cada pedido para a tela mudar sem reiniciar o servidor.
-    return html(res, 200, readFileSync(PAGINA, 'utf8'));
-  }
+    if (url.pathname === '/') {
+      // Lido a cada pedido para a tela mudar sem reiniciar o servidor.
+      return html(res, 200, readFileSync(PAGINA, 'utf8'));
+    }
 
-  if (url.pathname === '/carts') {
-    return json(res, 200, Object.values(carrinhos));
-  }
+    if (url.pathname === '/carts') {
+      return json(res, 200, Object.values(carrinhos));
+    }
 
-  const match = url.pathname.match(/^\/cart\/([^/]+)\/total$/);
-  if (!match) {
-    return json(res, 404, { erro: 'rota nao encontrada' });
-  }
+    const match = url.pathname.match(/^\/cart\/([^/]+)\/total$/);
+    if (!match) {
+      return json(res, 404, { erro: 'rota nao encontrada' });
+    }
 
-  const carrinho = buscarCarrinho(match[1]);
-  if (!carrinho) {
-    return json(res, 404, { erro: 'carrinho nao encontrado' });
-  }
+    const carrinho = buscarCarrinho(match[1]);
+    if (!carrinho) {
+      return json(res, 404, { erro: 'carrinho nao encontrado' });
+    }
 
-  const cep = url.searchParams.get('cep') || carrinho.cep;
-  return json(res, 200, calcularTotal(carrinho, cep));
-});
+    const cep = url.searchParams.get('cep') || carrinho.cep;
+    try {
+      return json(res, 200, calcularTotal(carrinho, cep, agora()));
+    } catch (erro) {
+      if (erro instanceof CupomInvalido) {
+        return json(res, 422, { erro: erro.message });
+      }
+      throw erro;
+    }
+  });
+}
+
+export const app = criarApp();
 
 if (import.meta.url === `file://${process.argv[1]}`) {
   app.listen(PORT, () => {
