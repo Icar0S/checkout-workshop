@@ -49,7 +49,7 @@
     const reais = (centavos) =>
       (centavos / 100).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
 
-    const rotulos = { subtotal: 'Subtotal', frete: 'Frete', total: 'Total' };
+    const rotulos = { subtotal: 'Subtotal', desconto: 'Desconto', frete: 'Frete', total: 'Total' };
 
     const $ = (id) => document.getElementById(id);
     let carrinhos = [];

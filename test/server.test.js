@@ -34,7 +34,7 @@ test('GET /carts lista os carrinhos com itens e cupom', async () => {
 test('GET /cart/:id/total devolve subtotal, frete e total', async () => {
   const { status, corpo } = await get('/cart/c0/total');
   assert.equal(status, 200);
-  assert.deepEqual(corpo, { subtotal: 18997, frete: 1990, total: 20987 });
+  assert.deepEqual(corpo, { subtotal: 18997, desconto: 0, frete: 1990, total: 20987 });
 });
 
 test('GET /cart/:id/total responde 404 para carrinho inexistente', async () => {

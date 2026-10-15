@@ -1,0 +1,35 @@
+# Decisões tomadas pelo agente sem perguntar, ao aplicar o cupom
+
+- Implementei direto, sem perguntar as regras antes e sem escrever uma spec.
+- O desconto percentual é arredondado para o centavo mais próximo (`Math.round`); meio centavo arredonda para cima.
+- O desconto incide só sobre o subtotal, nunca sobre o frete.
+- O desconto (fixo ou percentual) é limitado ao subtotal; o total nunca fica abaixo do frete.
+- O frete grátis a partir de R$ 250 olha o subtotal antes do desconto.
+- O `minSubtotalCentavos` é comparado com o subtotal antes do desconto.
+- O mínimo é inclusivo: subtotal igual ao mínimo libera o cupom.
+- A validade é inclusiva: o cupom vale até o fim do dia de `validoAte`.
+- "Hoje" é a data local do servidor, não UTC.
+- Cupom vencido é ignorado: `desconto: 0`, sem erro.
+- Cupom abaixo do mínimo é ignorado: `desconto: 0`, sem erro.
+- Cupom inexistente é ignorado: `desconto: 0`, sem erro.
+- A resposta não diz por que um cupom foi recusado.
+- Cupom de tipo desconhecido dá `desconto: 0`.
+- O código do cupom é comparado exatamente como está (maiúsculas e minúsculas contam).
+- Só um cupom por carrinho: o que estiver em `couponCode`.
+- O cupom vem só do carrinho; a API não aceita cupom por query string nem por outra rota.
+- O `FRETEGRATIS` zera o frete para qualquer CEP, inclusive fora do Sudeste.
+- O `FRETEGRATIS` reporta `desconto: 0`; o frete economizado não aparece como desconto.
+- Total = subtotal − desconto + frete.
+- A resposta sempre traz o campo `desconto`, mesmo sem cupom (`desconto: 0`).
+- A ordem dos campos na resposta é `subtotal`, `desconto`, `frete`, `total`.
+- O desconto é devolvido como número positivo, não negativo.
+- As regras de cupom ficaram em `src/pricing.js`, que passou a importar `buscarCupom` de `src/data.js`.
+- Criei as funções `cupomValido` e `calcularDesconto` e as exportei.
+- `calcularTotal` ganhou um terceiro parâmetro `hoje` (padrão `new Date()`), só para testes; a API não o expõe.
+- A tela ganhou o rótulo "Desconto" e nenhuma outra mudança.
+- Alterei 3 testes existentes para esperarem `desconto: 0`.
+- Os testes novos usam a data fixa 14/10/2026.
+- Atualizei o README com as regras acima e o novo exemplo do `curl`.
+- Não mexi em `src/server.js`, embora a alteração que encontrei nele faça o `npm test` travar.
+- Validei rodando os testes numa cópia temporária com o `src/server.js` do último commit.
+- Não abri os branches `checkpoint/*` nem `material/revisao`.

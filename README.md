@@ -1,6 +1,6 @@
 # checkout-workshop
 
-Checkout mínimo, sem nenhuma dependência. Subtotal, frete e total funcionam.
+Checkout mínimo, sem nenhuma dependência. Subtotal, cupom, frete e total funcionam.
 
 Requer **Node 20 ou superior**. Não existe `npm install` — não há pacotes.
 
@@ -25,7 +25,7 @@ Pela linha de comando:
 
 ```
 curl http://localhost:3000/cart/c1/total
-# {"subtotal":18997,"frete":1990,"total":20987}
+# {"subtotal":18997,"desconto":1900,"frete":1990,"total":19087}
 ```
 
 ## O que existe
@@ -33,14 +33,21 @@ curl http://localhost:3000/cart/c1/total
 | Arquivo | O que faz |
 | --- | --- |
 | `src/data.js` | Carrinhos e cupons em memória |
-| `src/pricing.js` | `calcularSubtotal`, `calcularFrete`, `calcularTotal` |
+| `src/pricing.js` | `calcularSubtotal`, `calcularFrete`, `cupomValido`, `calcularDesconto`, `calcularTotal` |
 | `src/server.js` | `GET /carts`, `GET /cart/:id/total` e a página em `/` |
 | `public/index.html` | A tela. Formata centavos em reais; não faz conta |
-| `test/` | 13 testes, todos verdes |
+| `test/` | 21 testes, todos verdes |
 
 Dinheiro sempre em **centavos inteiros**. Nunca float.
 
-## O que não existe
+## Cupom
 
-O carrinho tem um campo `couponCode`, e os cupons estão em `src/data.js`.
-Nada disso é usado no cálculo.
+O `couponCode` do carrinho é aplicado em `calcularTotal`:
+
+- `percentual` e `fixo` descontam do subtotal (percentual arredonda o centavo;
+  o desconto nunca passa do subtotal). O frete não tem desconto.
+- `frete_gratis` zera o frete.
+- O frete grátis acima de R$ 250 olha o subtotal **antes** do desconto.
+- O cupom vale até o fim do dia de `validoAte`, e só se o subtotal atingir
+  `minSubtotalCentavos`, quando houver.
+- Cupom vencido, abaixo do mínimo ou inexistente é ignorado: `desconto: 0`, sem erro.

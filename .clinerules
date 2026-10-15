@@ -3,5 +3,39 @@
 Nunca faça commit nem push. Quem mexe no git é o humano.
 
 ## Comandos
-Testar:  npm test
-Rodar:   npm start
+Testar:  npm test   (node --test)
+Rodar:   npm start  (node src/server.js, porta 3000 ou PORT)
+Node 20 ou superior. Não existe `npm install`: o projeto não tem pacotes.
+
+## Testes
+Ficam em `test/*.test.js`, com `node:test` e `node:assert/strict`.
+`test/pricing.test.js` usa os carrinhos `c0`–`c7` de `src/data.js` como fixtures.
+`test/server.test.js` importa `app` de `src/server.js` e chama `app.listen(0)` a cada teste.
+
+## Estrutura
+`src/data.js`: carrinhos e cupons em memória, `buscarCarrinho`, `buscarCupom`.
+`src/pricing.js`: toda conta (subtotal, frete, cupom, total).
+`src/server.js`: `GET /`, `GET /carts`, `GET /cart/:id/total?cep=`.
+`public/index.html`: a tela; formata centavos em reais, não calcula.
+`scripts/`: utilitários do workshop (reset, checkpoint, revisao).
+
+## Estilo
+    export function calcularFrete(carrinho, cep = carrinho.cep) {
+      if (calcularSubtotal(carrinho) >= FRETE_GRATIS_A_PARTIR_DE) return 0;
+      const primeiroDigito = Number(String(cep).replace(/\D/g, '').charAt(0));
+      return primeiroDigito <= 3 ? FRETE_SUDESTE : FRETE_DEMAIS;
+    }
+
+## Git
+`npm run reset` faz `git checkout` e `git clean` em `src/`, `public/` e `test/`.
+`npm run checkpoint:1|2|3` e `npm run voltar` fazem `git stash` e trocam de branch.
+`npm run revisao` copia `REVISAO.md` do branch `material/revisao`.
+Esses scripts mexem no git: quem roda é o humano.
+
+## Nunca faça
+Commit ou push.
+Dinheiro em float: sempre centavos inteiros.
+Conta na tela: `public/index.html` só exibe o que a API devolve.
+Adicionar dependência: o projeto não tem nenhuma.
+- Nunca converta centavos para reais dentro de src/. Formatação é problema de quem exibe.
+- Não altere um teste existente só para fazê-lo passar. Se um teste parece errado, diga e pare.

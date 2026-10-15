@@ -42,6 +42,7 @@ test('cep informado sobrescreve o cep do carrinho', () => {
 test('total e a soma de subtotal e frete', () => {
   assert.deepEqual(calcularTotal(carrinhos.c0), {
     subtotal: 18997,
+    desconto: 0,
     frete: FRETE_SUDESTE,
     total: 20987
   });
@@ -50,6 +51,7 @@ test('total e a soma de subtotal e frete', () => {
 test('total de carrinho com frete gratuito nao cobra entrega', () => {
   assert.deepEqual(calcularTotal(carrinhos.c6), {
     subtotal: 30000,
+    desconto: 0,
     frete: 0,
     total: 30000
   });
