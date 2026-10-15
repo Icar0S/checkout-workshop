@@ -1,5 +1,6 @@
 import { createServer } from 'node:http';
 import { readFileSync } from 'node:fs';
+import { pathToFileURL } from 'node:url';
 import { buscarCarrinho, carrinhos } from './data.js';
 import { calcularTotal } from './pricing.js';
 
@@ -53,7 +54,16 @@ export const app = createServer((req, res) => {
   return json(res, 200, calcularTotal(carrinho, cep));
 });
 
-if (import.meta.url === `file://${process.argv[1]}`) {
+// pathToFileURL, e nao `file://${argv[1]}`, para funcionar tambem no Windows.
+if (import.meta.url === pathToFileURL(process.argv[1]).href) {
+  app.on('error', (erro) => {
+    if (erro.code !== 'EADDRINUSE') throw erro;
+    console.error(`a porta ${PORT} ja esta em uso por outro processo.`);
+    console.error('feche esse processo ou escolha outra porta:');
+    console.error('  PowerShell: $env:PORT=3001; npm start');
+    console.error('  bash:       PORT=3001 npm start');
+    process.exitCode = 1;
+  });
   app.listen(PORT, () => {
     console.log(`checkout-workshop ouvindo em http://localhost:${PORT}`);
     console.log(`abra no navegador, ou: curl http://localhost:${PORT}/cart/c1/total`);

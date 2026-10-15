@@ -5,44 +5,197 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Checkout</title>
   <style>
-    :root { --fundo: #f6f6f4; --cartao: #fff; --texto: #1d1d1b; --suave: #6b6b66; --linha: #e4e4df; --erro: #b3261e; }
+    :root {
+      color-scheme: light dark;
+      --fundo: #f2f5f3;
+      --cartao: #ffffff;
+      --texto: #17201c;
+      --suave: #5b6761;
+      --linha: #dde4e0;
+      --codigo: #edf1ef;
+      --marca: #1f6f5c;
+      --marca-texto: #ffffff;
+      --marca-fundo: #e3f1ec;
+      --novo: #7a4f00;
+      --novo-fundo: #fcefcf;
+      --erro: #b3261e;
+      --erro-fundo: #fbe8e6;
+      --sombra: 0 1px 2px rgb(0 0 0 / 0.04), 0 6px 20px rgb(0 0 0 / 0.04);
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --fundo: #121614;
+        --cartao: #1a1f1c;
+        --texto: #e6ece8;
+        --suave: #9ba69f;
+        --linha: #2c3430;
+        --codigo: #222925;
+        --marca: #63c7a9;
+        --marca-texto: #0d1f19;
+        --marca-fundo: #1b322b;
+        --novo: #f3c560;
+        --novo-fundo: #392e12;
+        --erro: #ff8f85;
+        --erro-fundo: #3a1c19;
+        --sombra: none;
+      }
+    }
     * { box-sizing: border-box; }
-    body { margin: 0; padding: 32px 16px; background: var(--fundo); color: var(--texto); font: 16px/1.5 system-ui, sans-serif; }
-    main { max-width: 520px; margin: 0 auto; background: var(--cartao); border: 1px solid var(--linha); border-radius: 12px; padding: 24px; }
-    h1 { font-size: 20px; margin: 0 0 16px; }
-    label { display: block; font-size: 13px; color: var(--suave); margin-top: 12px; }
-    select, input { width: 100%; font: inherit; padding: 8px 10px; margin-top: 4px; border: 1px solid var(--linha); border-radius: 8px; background: #fff; }
-    table { width: 100%; border-collapse: collapse; margin-top: 16px; }
-    td { padding: 6px 0; border-bottom: 1px solid var(--linha); }
-    td:last-child { text-align: right; font-variant-numeric: tabular-nums; }
-    .cupom { margin-top: 12px; font-size: 14px; color: var(--suave); }
-    .cupom code { background: var(--fundo); padding: 2px 6px; border-radius: 4px; color: var(--texto); }
-    button { margin-top: 16px; width: 100%; font: inherit; font-weight: 600; padding: 10px; border: 0; border-radius: 8px; background: var(--texto); color: #fff; cursor: pointer; }
-    #resultado { margin-top: 16px; }
-    #resultado .total td { font-weight: 700; border-bottom: 0; }
-    #erro { color: var(--erro); white-space: pre-wrap; font-family: ui-monospace, monospace; font-size: 13px; }
+    body { margin: 0; background: var(--fundo); color: var(--texto); font: 15px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+    code, pre, .mono { font-family: ui-monospace, "Cascadia Mono", Consolas, Menlo, monospace; font-size: 0.92em; }
+    .pagina { max-width: 1100px; margin: 0 auto; padding: 32px 16px 56px; }
+
+    .topo { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 12px 32px; margin-bottom: 24px; }
+    h1 { font-size: 26px; line-height: 1.2; margin: 0; letter-spacing: -0.01em; }
+    .sub { margin: 4px 0 0; color: var(--suave); }
+    .regra { margin: 0; max-width: 470px; padding: 10px 14px; border-radius: 10px; background: var(--marca-fundo); font-size: 13.5px; }
+
+    .grade { display: grid; gap: 16px; }
+    @media (min-width: 880px) { .grade { grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); } }
+    .cartao { background: var(--cartao); border: 1px solid var(--linha); border-radius: 14px; padding: 20px; box-shadow: var(--sombra); min-width: 0; }
+    .largo { margin-top: 16px; }
+    h2 { font-size: 16px; margin: 0 0 4px; }
+    .explica { margin: 0 0 16px; color: var(--suave); font-size: 13.5px; }
+    h3 { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--suave); margin: 20px 0 6px; }
+
+    .opcoes { display: grid; gap: 6px; }
+    .opcao { position: relative; display: grid; grid-template-columns: 2.4em 1fr auto; align-items: center; gap: 8px; padding: 8px 12px; border: 1px solid var(--linha); border-radius: 10px; cursor: pointer; }
+    .opcao:hover { border-color: var(--suave); }
+    .opcao.selecionada { border-color: var(--marca); background: var(--marca-fundo); }
+    .opcao input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+    .opcao:focus-within { outline: 2px solid var(--marca); outline-offset: 2px; }
+    .opcao-id { font-weight: 700; }
+    .opcao-itens { color: var(--suave); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+    table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+    .itens td { padding: 6px 0; border-bottom: 1px solid var(--linha); }
+    .itens td:last-child { text-align: right; white-space: nowrap; }
+    .cada { color: var(--suave); font-size: 13px; }
+    .linha-cupom { margin: 12px 0 0; font-size: 14px; color: var(--suave); }
+
+    label.campo { display: block; margin-top: 20px; font-size: 13px; color: var(--suave); }
+    .linha-cep { display: flex; gap: 8px; margin-top: 4px; }
+    input[type="text"] { flex: 1; min-width: 0; font: inherit; padding: 9px 12px; border: 1px solid var(--linha); border-radius: 10px; background: var(--fundo); color: var(--texto); }
+    input[type="text"]:focus { outline: 2px solid var(--marca); outline-offset: 1px; }
+    button { font: inherit; font-weight: 600; padding: 9px 16px; border-radius: 10px; border: 1px solid var(--marca); background: var(--marca); color: var(--marca-texto); cursor: pointer; }
+    button:hover { filter: brightness(1.08); }
+    button:disabled { opacity: 0.45; cursor: default; filter: none; }
+    button.secundario { background: transparent; color: var(--texto); border-color: var(--linha); }
+    button.secundario:hover:not(:disabled) { border-color: var(--suave); }
+    button.link { padding: 0; border: 0; background: none; color: var(--marca); font-weight: 600; text-decoration: underline; }
+    button:focus-visible { outline: 2px solid var(--marca); outline-offset: 2px; }
+
+    .pedido { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-bottom: 12px; min-height: 28px; }
+    .pedido code { padding: 4px 8px; border-radius: 6px; background: var(--codigo); overflow-wrap: anywhere; }
+    .status { font: 600 12px ui-monospace, Consolas, monospace; padding: 3px 8px; border-radius: 6px; }
+    .status.ok { color: var(--marca); background: var(--marca-fundo); }
+    .status.falha { color: var(--erro); background: var(--erro-fundo); }
+
+    .recibo th, .recibo td { padding: 9px 0; border-bottom: 1px dashed var(--linha); }
+    .recibo th { text-align: left; font-weight: 500; }
+    .recibo td { text-align: right; }
+    .recibo tr.total th, .recibo tr.total td { border-bottom: 0; padding-top: 14px; font-size: 19px; font-weight: 700; }
+    .vazio { margin: 0; padding: 24px 0; color: var(--suave); text-align: center; }
+    .falha-texto { margin: 0; color: var(--erro); font-weight: 600; }
+
+    details { margin-top: 16px; }
+    summary { cursor: pointer; font-size: 13px; color: var(--suave); }
+    pre { margin: 8px 0 0; padding: 12px 14px; border-radius: 10px; background: var(--codigo); overflow-x: auto; font-size: 12.5px; line-height: 1.45; }
+
+    .selo { display: inline-block; padding: 1px 8px; border-radius: 999px; font-size: 11.5px; font-weight: 600; white-space: nowrap; vertical-align: 1px; }
+    .selo.cupom { background: var(--codigo); font-family: ui-monospace, Consolas, monospace; }
+    .selo.novo { color: var(--novo); background: var(--novo-fundo); }
+    .selo.alerta { color: var(--erro); background: var(--erro-fundo); }
+    .sem-cupom { font-size: 12px; color: var(--suave); }
+
+    .cabecalho { display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: space-between; gap: 12px; }
+    .acoes { display: flex; flex-wrap: wrap; gap: 8px; }
+    .referencia { margin: 0 0 12px; padding: 10px 14px; border-radius: 10px; background: var(--fundo); font-size: 13.5px; }
+    .aviso-copia { display: block; min-height: 1.5em; margin: 8px 0 0; font-size: 13px; color: var(--marca); }
+    .oculto { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+    textarea { width: 100%; min-height: 160px; margin-top: 8px; font: 12.5px/1.45 ui-monospace, Consolas, monospace; background: var(--codigo); color: var(--texto); border: 1px solid var(--linha); border-radius: 10px; padding: 10px; }
+    .rolagem { overflow-x: auto; }
+    .todos { min-width: 640px; font-size: 14px; }
+    .todos th, .todos td { padding: 8px 10px; border-bottom: 1px solid var(--linha); text-align: right; vertical-align: top; }
+    .todos thead th { font-size: 12px; font-weight: 600; color: var(--suave); white-space: nowrap; }
+    .todos th:nth-child(-n+3), .todos td:nth-child(-n+3) { text-align: left; }
+    .todos td.mudou { background: var(--novo-fundo); }
+    .antes { display: block; font-size: 11.5px; color: var(--suave); white-space: nowrap; }
+    .todos caption { caption-side: bottom; text-align: left; padding-top: 8px; font-size: 12.5px; color: var(--suave); }
+
+    .legenda { display: grid; gap: 8px; margin: 20px 0 0; padding: 0; list-style: none; font-size: 13px; color: var(--suave); }
+    @media (min-width: 880px) { .legenda { grid-template-columns: repeat(3, 1fr); } }
+    .amostra { display: inline-block; width: 1.4em; height: 1em; margin-right: 4px; border-radius: 4px; background: var(--novo-fundo); vertical-align: -2px; }
   </style>
 </head>
 <body>
-  <main>
-    <h1>Checkout</h1>
+  <div class="pagina">
+    <header class="topo">
+      <div>
+        <h1>Checkout</h1>
+        <p class="sub">A loja de exemplo do workshop de specs.</p>
+      </div>
+      <p class="regra"><strong>Esta tela não faz conta.</strong> Ela pede o total à API e mostra cada campo que voltar, na ordem em que voltou. Toda conta mora em <code>src/pricing.js</code>.</p>
+    </header>
 
-    <label>Carrinho
-      <select id="carrinho"></select>
-    </label>
+    <main class="grade">
+      <section class="cartao" aria-labelledby="titulo-carrinho">
+        <h2 id="titulo-carrinho">Carrinho</h2>
+        <p class="explica">Os carrinhos vêm de <code>GET /carts</code>.</p>
+        <div class="opcoes" id="carrinhos" role="radiogroup" aria-labelledby="titulo-carrinho"></div>
 
-    <table id="itens"></table>
-    <p class="cupom" id="cupom"></p>
+        <h3>Itens</h3>
+        <table class="itens">
+          <thead class="oculto"><tr><th scope="col">Item</th><th scope="col">Preço</th></tr></thead>
+          <tbody id="itens"></tbody>
+        </table>
+        <p class="linha-cupom" id="cupom"></p>
 
-    <label>CEP de entrega
-      <input id="cep" inputmode="numeric" maxlength="8">
-    </label>
+        <form id="formulario">
+          <label class="campo" for="cep">CEP de entrega</label>
+          <div class="linha-cep">
+            <input id="cep" type="text" inputmode="numeric" maxlength="8" autocomplete="off">
+            <button id="calcular">Calcular</button>
+          </div>
+        </form>
+      </section>
 
-    <button id="calcular">Calcular</button>
+      <section class="cartao" aria-labelledby="titulo-resposta">
+        <h2 id="titulo-resposta">O que a API devolveu</h2>
+        <p class="explica">O pedido exato, a resposta formatada e, embaixo, o JSON cru.</p>
+        <div class="pedido" id="pedido"></div>
+        <div id="resultado" aria-live="polite"></div>
+        <details id="cru" open hidden>
+          <summary>JSON cru</summary>
+          <pre id="json"></pre>
+        </details>
+      </section>
+    </main>
 
-    <div id="resultado"></div>
-    <p id="erro"></p>
-  </main>
+    <section class="cartao largo" aria-labelledby="titulo-todos">
+      <div class="cabecalho">
+        <div>
+          <h2 id="titulo-todos">Todos os carrinhos</h2>
+          <p class="explica">Cada carrinho com o próprio CEP. Serve para comparar: antes e depois de uma mudança no código, ou com outro grupo.</p>
+        </div>
+        <div class="acoes">
+          <button id="calcular-todos">Calcular todos</button>
+          <button id="guardar" class="secundario" disabled>Guardar como referência</button>
+          <button id="copiar" class="secundario" disabled>Copiar tabela</button>
+        </div>
+      </div>
+      <p class="referencia" id="referencia"></p>
+      <div class="rolagem" id="todos"><p class="vazio">Clique em <strong>Calcular todos</strong> para ver os carrinhos lado a lado.</p></div>
+      <output class="aviso-copia" id="aviso-copia"></output>
+      <textarea id="copia" hidden readonly aria-label="Tabela em Markdown"></textarea>
+
+      <ul class="legenda">
+        <li><span class="selo novo">campo novo</span> A API devolveu um campo que a tela não conhece. Ela mostra assim mesmo, com o nome cru.</li>
+        <li><span class="selo alerta">não é centavo inteiro</span> Dinheiro aqui é sempre inteiro, em centavos. Número quebrado é sinal de conta em float.</li>
+        <li><span class="amostra"></span> O valor mudou desde a referência guardada. Embaixo, o valor de antes.</li>
+      </ul>
+    </section>
+  </div>
 
   <script>
     // A tela nao faz conta. Formatar centavos em reais e trabalho dela; calcular, nao.
@@ -53,59 +206,251 @@
 
     const $ = (id) => document.getElementById(id);
     let carrinhos = [];
+    let ultimoCalculo = null;
+
+    const CHAVE_REFERENCIA = 'checkout-workshop:referencia';
+    const SEM_SERVIDOR = 'Não consegui falar com a API. O servidor está rodando? (npm start)';
+
+    const esc = (texto) => String(texto).replace(/[&<>"']/g, (c) => `&#${c.charCodeAt(0)};`);
+    const ehObjeto = (v) => v !== null && typeof v === 'object' && !Array.isArray(v);
+    const horario = (iso) =>
+      new Date(iso).toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
+
+    // Inteiro e centavo. Qualquer outra coisa aparece crua, para nenhum float passar escondido.
+    function valorNaTela(valor) {
+      if (Number.isInteger(valor)) return esc(reais(valor));
+      const cru = `<code>${esc(JSON.stringify(valor))}</code>`;
+      return typeof valor === 'number' ? `${cru} <span class="selo alerta">não é centavo inteiro</span>` : cru;
+    }
+
+    function rotuloNaTela(campo) {
+      if (Object.hasOwn(rotulos, campo)) return esc(rotulos[campo]);
+      return `<code>${esc(campo)}</code> <span class="selo novo" title="A API devolveu um campo que esta tela não conhece.">campo novo</span>`;
+    }
+
+    // GET na API. Devolve status e corpo, ou null se o servidor nao respondeu.
+    async function pedir(caminho) {
+      try {
+        const resposta = await fetch(caminho);
+        const texto = await resposta.text();
+        let corpo = texto;
+        try { corpo = JSON.parse(texto); } catch {}
+        return { ok: resposta.ok, status: resposta.status, motivo: resposta.statusText, corpo };
+      } catch {
+        return null;
+      }
+    }
+
+    const seloStatus = (r) => `<span class="status ${r.ok ? 'ok' : 'falha'}">${r.status} ${esc(r.motivo)}</span>`;
+    const mensagemDeErro = (r) => (ehObjeto(r.corpo) && r.corpo.erro) || r.motivo;
 
     async function carregarCarrinhos() {
-      const resposta = await fetch('/carts');
-      carrinhos = await resposta.json();
-      $('carrinho').innerHTML = carrinhos
-        .map((c) => `<option value="${c.id}">${c.id} — ${c.items.map((i) => i.nome).join(', ')}</option>`)
-        .join('');
+      const r = await pedir('/carts');
+      if (!r || !r.ok) {
+        $('carrinhos').innerHTML = `<p class="falha-texto">${r ? `GET /carts respondeu ${r.status}.` : SEM_SERVIDOR}</p>`;
+        return;
+      }
+      carrinhos = r.corpo;
+      $('carrinhos').innerHTML = carrinhos.map((c, i) => `
+        <label class="opcao">
+          <input type="radio" name="carrinho" value="${esc(c.id)}"${i === 0 ? ' checked' : ''}>
+          <span class="opcao-id">${esc(c.id)}</span>
+          <span class="opcao-itens">${esc(c.items.map((item) => item.nome).join(', '))}</span>
+          ${c.couponCode ? `<span class="selo cupom">${esc(c.couponCode)}</span>` : '<span class="sem-cupom">sem cupom</span>'}
+        </label>`).join('');
       mostrarCarrinho();
+      desenharReferencia();
     }
 
     function carrinhoAtual() {
-      return carrinhos.find((c) => c.id === $('carrinho').value);
+      const marcado = document.querySelector('input[name="carrinho"]:checked');
+      return carrinhos.find((c) => c.id === marcado?.value);
     }
 
     function mostrarCarrinho() {
       const c = carrinhoAtual();
-      $('itens').innerHTML = c.items
-        .map((i) => `<tr><td>${i.qtd} × ${i.nome}</td><td>${reais(i.precoCentavos * i.qtd)}</td></tr>`)
-        .join('');
+      for (const opcao of document.querySelectorAll('.opcao')) {
+        opcao.classList.toggle('selecionada', opcao.querySelector('input').checked);
+      }
+      // Preco unitario, como veio. Multiplicar pela quantidade ja seria fazer conta.
+      $('itens').innerHTML = c.items.map((item) => `
+        <tr><td>${esc(item.qtd)} × ${esc(item.nome)}</td><td>${esc(reais(item.precoCentavos))}${item.qtd > 1 ? ' <span class="cada">cada</span>' : ''}</td></tr>`).join('');
       $('cupom').innerHTML = c.couponCode
-        ? `Cupom no carrinho: <code>${c.couponCode}</code>`
+        ? `Cupom no carrinho: <span class="selo cupom">${esc(c.couponCode)}</span>`
         : 'Sem cupom neste carrinho.';
       $('cep').value = c.cep;
-      $('resultado').innerHTML = '';
-      $('erro').textContent = '';
+      $('pedido').innerHTML = '';
+      $('resultado').innerHTML = '<p class="vazio">Clique em <strong>Calcular</strong> para pedir o total à API.</p>';
+      $('cru').hidden = true;
     }
 
-    async function calcular() {
+    // Mostra tudo que a API devolver, na ordem em que devolver. Se aparecer
+    // um campo novo, aparece aqui tambem.
+    function recibo(corpo) {
+      const linhas = Object.entries(corpo).map(([campo, valor]) =>
+        `<tr${campo === 'total' ? ' class="total"' : ''}><th scope="row">${rotuloNaTela(campo)}</th><td>${valorNaTela(valor)}</td></tr>`);
+      return `<table class="recibo">${linhas.join('')}</table>`;
+    }
+
+    async function calcular(evento) {
+      evento.preventDefault();
       const c = carrinhoAtual();
-      const cep = $('cep').value.trim();
-      $('resultado').innerHTML = '';
-      $('erro').textContent = '';
-
-      const resposta = await fetch(`/cart/${c.id}/total?cep=${encodeURIComponent(cep)}`);
-      const corpo = await resposta.json();
-
-      if (!resposta.ok) {
-        $('erro').textContent = `HTTP ${resposta.status}\n${JSON.stringify(corpo, null, 2)}`;
+      if (!c) return;
+      const caminho = `/cart/${encodeURIComponent(c.id)}/total?cep=${encodeURIComponent($('cep').value.trim())}`;
+      const r = await pedir(caminho);
+      if (!r) {
+        $('pedido').innerHTML = '';
+        $('resultado').innerHTML = `<p class="falha-texto">${SEM_SERVIDOR}</p>`;
+        $('cru').hidden = true;
         return;
       }
-
-      // Mostra tudo que a API devolver, na ordem em que devolver. Se aparecer
-      // um campo novo, aparece aqui tambem.
-      const linhas = Object.entries(corpo).map(([campo, valor]) => {
-        const rotulo = rotulos[campo] ?? campo;
-        const texto = Number.isInteger(valor) ? reais(valor) : JSON.stringify(valor);
-        return `<tr class="${campo === 'total' ? 'total' : ''}"><td>${rotulo}</td><td>${texto}</td></tr>`;
-      });
-      $('resultado').innerHTML = `<table>${linhas.join('')}</table>`;
+      $('pedido').innerHTML = `<code>GET ${esc(caminho)}</code> ${seloStatus(r)}`;
+      if (!r.ok) {
+        $('resultado').innerHTML = `<p class="falha-texto">${esc(mensagemDeErro(r))}</p>`;
+      } else if (!ehObjeto(r.corpo)) {
+        $('resultado').innerHTML = '<p class="falha-texto">A resposta não é um objeto JSON.</p>';
+      } else {
+        $('resultado').innerHTML = recibo(r.corpo);
+      }
+      $('json').textContent = typeof r.corpo === 'string' ? r.corpo : JSON.stringify(r.corpo, null, 2);
+      $('cru').hidden = false;
     }
 
-    $('carrinho').addEventListener('change', mostrarCarrinho);
-    $('calcular').addEventListener('click', calcular);
+    // ---- Todos os carrinhos, e a comparacao com uma referencia guardada no navegador.
+
+    function lerReferencia() {
+      try { return JSON.parse(localStorage.getItem(CHAVE_REFERENCIA)); } catch { return null; }
+    }
+
+    function gravarReferencia(valor) {
+      try {
+        if (valor) localStorage.setItem(CHAVE_REFERENCIA, JSON.stringify(valor));
+        else localStorage.removeItem(CHAVE_REFERENCIA);
+      } catch {}
+    }
+
+    const valorDe = (linha, campo) =>
+      linha && linha.ok && ehObjeto(linha.corpo) && Object.hasOwn(linha.corpo, campo) ? linha.corpo[campo] : undefined;
+
+    // Campos de todas as respostas, na ordem em que aparecem.
+    function camposDe(linhas) {
+      const campos = [];
+      for (const linha of linhas) {
+        if (!linha.ok || !ehObjeto(linha.corpo)) continue;
+        for (const campo of Object.keys(linha.corpo)) if (!campos.includes(campo)) campos.push(campo);
+      }
+      return campos;
+    }
+
+    async function calcularTodos() {
+      $('calcular-todos').disabled = true;
+      const linhas = await Promise.all(carrinhos.map(async (c) => {
+        const r = await pedir(`/cart/${encodeURIComponent(c.id)}/total`);
+        return r && { id: c.id, cupom: c.couponCode, cep: c.cep, ...r };
+      }));
+      $('calcular-todos').disabled = false;
+      if (linhas.some((linha) => !linha)) {
+        $('todos').innerHTML = `<p class="falha-texto">${SEM_SERVIDOR}</p>`;
+        return;
+      }
+      ultimoCalculo = { quando: new Date().toISOString(), linhas };
+      $('guardar').disabled = false;
+      $('copiar').disabled = false;
+      desenharTodos();
+    }
+
+    function celula(linha, antes, campo) {
+      const agora = valorDe(linha, campo);
+      const texto = agora === undefined ? '—' : valorNaTela(agora);
+      if (!antes) return `<td>${texto}</td>`;
+      const anterior = valorDe(antes, campo);
+      if (JSON.stringify(anterior) === JSON.stringify(agora)) return `<td>${texto}</td>`;
+      const era = anterior === undefined ? 'não existia' : `<s>${valorNaTela(anterior)}</s>`;
+      return `<td class="mudou">${texto}<span class="antes">antes: ${era}</span></td>`;
+    }
+
+    function celulaHttp(linha, antes) {
+      const texto = linha.ok ? linha.status : `<span class="status falha">${linha.status}</span> ${esc(mensagemDeErro(linha))}`;
+      if (!antes || antes.status === linha.status) return `<td>${texto}</td>`;
+      return `<td class="mudou">${texto}<span class="antes">antes: <s>${antes.status}</s></span></td>`;
+    }
+
+    function desenharTodos() {
+      desenharReferencia();
+      if (!ultimoCalculo) return;
+      const referencia = lerReferencia();
+      const campos = camposDe([...ultimoCalculo.linhas, ...(referencia?.linhas ?? [])]);
+      const cabecalho = ['Carrinho', 'Cupom', 'CEP', ...campos.map(rotuloNaTela), 'HTTP'];
+      const corpo = ultimoCalculo.linhas.map((linha) => {
+        const antes = referencia?.linhas.find((r) => r.id === linha.id);
+        return `<tr>
+          <th scope="row"><code>${esc(linha.id)}</code></th>
+          <td>${linha.cupom ? `<span class="selo cupom">${esc(linha.cupom)}</span>` : '—'}</td>
+          <td><code>${esc(linha.cep)}</code></td>
+          ${campos.map((campo) => celula(linha, antes, campo)).join('')}
+          ${celulaHttp(linha, antes)}
+        </tr>`;
+      });
+      $('todos').innerHTML = `
+        <table class="todos">
+          <thead><tr>${cabecalho.map((c) => `<th scope="col">${c}</th>`).join('')}</tr></thead>
+          <tbody>${corpo.join('')}</tbody>
+          <caption>Calculado em ${horario(ultimoCalculo.quando)}.</caption>
+        </table>`;
+    }
+
+    function desenharReferencia() {
+      const referencia = lerReferencia();
+      $('referencia').innerHTML = referencia
+        ? `Comparando com a referência guardada em <strong>${horario(referencia.quando)}</strong>. Células marcadas mudaram desde então. <button class="link" id="apagar">Apagar referência</button>`
+        : 'Sem referência guardada. Calcule todos e guarde como referência <strong>antes</strong> de mudar o código. Depois de mudar, calcule de novo: o que mudou aparece marcado.';
+      $('apagar')?.addEventListener('click', () => { gravarReferencia(null); desenharTodos(); });
+    }
+
+    // Tabela em Markdown, para colar onde o grupo anota.
+    function comoMarkdown() {
+      const campos = camposDe(ultimoCalculo.linhas);
+      const celulaMd = (texto) => String(texto).replace(/\|/g, '\\|');
+      const linhas = ultimoCalculo.linhas.map((linha) => [
+        linha.id,
+        linha.cupom ?? '—',
+        linha.cep,
+        ...campos.map((campo) => {
+          const v = valorDe(linha, campo);
+          if (v === undefined) return '—';
+          return Number.isInteger(v) ? reais(v) : JSON.stringify(v);
+        }),
+        linha.ok ? linha.status : `${linha.status} ${mensagemDeErro(linha)}`
+      ]);
+      const cabecalho = ['carrinho', 'cupom', 'cep', ...campos, 'http'];
+      return [
+        `Calculado em ${horario(ultimoCalculo.quando)}`,
+        '',
+        `| ${cabecalho.join(' | ')} |`,
+        `| ${cabecalho.map(() => '---').join(' | ')} |`,
+        ...linhas.map((linha) => `| ${linha.map(celulaMd).join(' | ')} |`)
+      ].join('\n');
+    }
+
+    async function copiar() {
+      const texto = comoMarkdown();
+      try {
+        await navigator.clipboard.writeText(texto);
+        $('copia').hidden = true;
+        $('aviso-copia').textContent = 'Tabela copiada em Markdown.';
+      } catch {
+        $('copia').value = texto;
+        $('copia').hidden = false;
+        $('copia').select();
+        $('aviso-copia').textContent = 'Não consegui copiar sozinho. O texto está selecionado abaixo: Ctrl+C.';
+      }
+    }
+
+    $('carrinhos').addEventListener('change', mostrarCarrinho);
+    $('formulario').addEventListener('submit', calcular);
+    $('calcular-todos').addEventListener('click', calcularTodos);
+    $('guardar').addEventListener('click', () => { gravarReferencia(ultimoCalculo); desenharTodos(); });
+    $('copiar').addEventListener('click', copiar);
     carregarCarrinhos();
   </script>
 </body>
